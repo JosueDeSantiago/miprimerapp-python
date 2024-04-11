@@ -1,0 +1,60 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consola de administración</title>
+    <style>
+        .running {
+            color: green;
+        }
+        
+        .stopped {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <h1>Consola de administración</h1>
+<p>
+<fieldset><legend><strong>Mis instancias AWS</strong></legend>
+    <table border="1"><caption><strong>Panel de EC2</strong></caption>
+        <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Tipo de instancia</th>
+            <th>IP pública</th>
+            <th>IP privada</th>
+            <th>DNS Público</th>
+            <th>Estado</th>
+            <th>Tiempo de uso</th>
+            <th>Acción</th>
+        </tr>
+        {% for instance in instances %}
+        <tr>
+            <td>{{instance.id}}</td>
+            <td>{{get_instance_name}}</td>
+            <td>{{instance.instance_type}}</td>
+            <td>{{instance.public_ip_address}}</td>
+            <td>{{instance.private_ip_address}}</td>
+            <td>{{instance.public_dns_name}}</td>
+            <td class="{% if instance.state['Name'] == 'running' %}running{% else %}stopped{% endif %}">{{instance.state['Name']}}</td>
+            <td>{{cpu_average}}</td>
+            <td>
+                <form action="/action" method="POST">
+                    <input type="hidden" name="id" value="{{instance.id}}">
+                    {% if instance.state['Name'] == 'running' %}
+                    <input type="submit" value="Detener">
+                    {% elif instance.state['Name'] == 'stopped' %}
+                    <input type="submit" value="Iniciar">
+                    {% endif %}
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</fieldset>
+</p>
+</body>
+</html>
